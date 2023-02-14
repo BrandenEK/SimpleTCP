@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SimpleTCP</RootNamespace>
     <AssemblyName>SimpleTCP</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientConnectionEventArgs.cs" />
+    <Compile Include="DataReceivedEventArgs.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Server\ConnectedClient.cs" />
     <Compile Include="Server\ServerListener.cs" />
