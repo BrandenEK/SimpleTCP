@@ -85,33 +85,6 @@ namespace SimpleTCP
             }
         }
 
-        public void Broadcast(byte[] data)
-        {
-            foreach(var client in _listeners.SelectMany(x => x.ConnectedClients))
-            {
-                client.GetStream().Write(data, 0, data.Length);
-            }
-        }
-
-        public void Broadcast(string data)
-        {
-            if (data == null) { return; }
-            Broadcast(StringEncoder.GetBytes(data));
-        }
-
-        public void BroadcastLine(string data)
-        {
-            if (string.IsNullOrEmpty(data)) { return; }
-            if (data.LastOrDefault() != Delimiter)
-            {
-                Broadcast(data + StringEncoder.GetString(new byte[] { Delimiter }));
-            }
-            else
-            {
-                Broadcast(data);
-            }
-        }
-
         private int RankIpAddress(IPAddress addr)
         {
             int rankScore = 1000;
