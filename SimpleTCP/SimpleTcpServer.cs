@@ -61,14 +61,20 @@ namespace SimpleTCP
             return listenIps.OrderByDescending(ip => RankIpAddress(ip)).ToList();
         }
 
-        public bool DisableDelay()
+        public bool DelayDisabled
         {
-            bool disabled = true;
-            for (int i = 0; i < _listeners.Count; i++)
+            get
             {
-                disabled = _listeners[i].disableDelay() && disabled;
+                for (int i = 0; i < _listeners.Count; i++)
+                    if (!_listeners[i].DelayDisabled)
+                        return false;
+                return true;
             }
-            return disabled;
+            set
+            {
+                for (int i = 0; i < _listeners.Count; i++)
+                    _listeners[i].DelayDisabled = true;
+            }
         }
 
         public void Send(string ipAddress, byte[] data)

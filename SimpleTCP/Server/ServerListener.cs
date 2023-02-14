@@ -20,9 +20,10 @@ namespace SimpleTCP.Server
             get { return _connectedClients.Count; }
         }
 
-        public bool disableDelay()
+        public bool DelayDisabled
         {
-            return _listener == null ? false : _listener.disableDelay();
+            get { return _listener != null && _listener.DelayDisabled; }
+            set { if (_listener != null) _listener.DelayDisabled = value; }
         }
 
         public IEnumerable<TcpClient> ConnectedClients { get { return _connectedClients; } }
