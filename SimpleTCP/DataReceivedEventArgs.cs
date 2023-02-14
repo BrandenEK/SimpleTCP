@@ -1,11 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SimpleTCP
 {
-    class DataReceivedEventArgs
+    public class DataReceivedEventArgs : EventArgs
     {
+        public byte[] data;
+        public string ip;
+
+        public DataReceivedEventArgs(byte[] data, string ip)
+        {
+            this.data = data;
+            this.ip = ip;
+        }
     }
 }

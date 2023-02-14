@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SimpleTCP
 {
-    class ClientConnectionEventArgs
+    public class ClientConnectionEventArgs : EventArgs
     {
+        public string ip;
+
+        public ClientConnectionEventArgs(string ip)
+        {
+            this.ip = ip;
+        }
     }
 }
