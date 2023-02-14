@@ -73,7 +73,7 @@ namespace SimpleTCP
             set
             {
                 for (int i = 0; i < _listeners.Count; i++)
-                    _listeners[i].DelayDisabled = true;
+                    _listeners[i].DelayDisabled = value;
             }
         }
 
