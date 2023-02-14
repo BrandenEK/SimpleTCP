@@ -25,6 +25,14 @@ namespace SimpleTCP.Server
 		{
 		}
 
+		public bool disableDelay()
+		{
+			if (Server == null) return false;
+
+			Server.NoDelay = true;
+			return Server.NoDelay;
+		}
+
 		public new bool Active
 		{
 			get { return base.Active; }

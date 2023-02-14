@@ -20,6 +20,11 @@ namespace SimpleTCP.Server
             get { return _connectedClients.Count; }
         }
 
+        public bool disableDelay()
+        {
+            return _listener == null ? false : _listener.disableDelay();
+        }
+
         public IEnumerable<TcpClient> ConnectedClients { get { return _connectedClients; } }
 
         internal ServerListener(SimpleTcpServer parentServer, IPAddress ipAddress, int port)
@@ -134,7 +139,6 @@ namespace SimpleTCP.Server
                     {
                         byte[] msg = _queuedMsg.ToArray();
                         _queuedMsg.Clear();
-                        _parent.NotifyDelimiterMessageRx(this, c, msg);
                     } else
                     {
                         _queuedMsg.AddRange(nextByte);
