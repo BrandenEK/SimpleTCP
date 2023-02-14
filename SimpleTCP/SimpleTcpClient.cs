@@ -22,8 +22,7 @@ namespace SimpleTCP
 		public System.Text.Encoding StringEncoder { get; set; }
 		private TcpClient _client = null;
 
-		public event EventHandler<Message> DelimiterDataReceived;
-		public event EventHandler<Message> DataReceived;
+		public event EventHandler<DataReceivedEventArgs> DataReceived;
 
 		internal bool QueueStop { get; set; }
 		internal int ReadLoopIntervalMs { get; set; }
@@ -108,7 +107,6 @@ namespace SimpleTCP
 				{
 					byte[] msg = _queuedMsg.ToArray();
 					_queuedMsg.Clear();
-					NotifyDelimiterMessageRx(c, msg);
 				}
 				else
 				{
@@ -122,21 +120,11 @@ namespace SimpleTCP
 			}
 		}
 
-		private void NotifyDelimiterMessageRx(TcpClient client, byte[] msg)
-		{
-			if (DelimiterDataReceived != null)
-			{
-				Message m = new Message(msg, client, StringEncoder, Delimiter, AutoTrimStrings);
-				DelimiterDataReceived(this, m);
-			}
-		}
-
 		private void NotifyEndTransmissionRx(TcpClient client, byte[] msg)
 		{
 			if (DataReceived != null)
 			{
-				Message m = new Message(msg, client, StringEncoder, Delimiter, AutoTrimStrings);
-				DataReceived(this, m);
+				DataReceived(this, new DataReceivedEventArgs(msg, client.Client.LocalEndPoint.ToString()));
 			}
 		}
 
@@ -164,24 +152,6 @@ namespace SimpleTCP
 				Write(data);
 			}
 		}
-
-		public Message WriteLineAndGetReply(string data, TimeSpan timeout)
-		{
-			Message mReply = null;
-			this.DataReceived += (s, e) => { mReply = e; };
-			WriteLine(data);
-
-			Stopwatch sw = new Stopwatch();
-			sw.Start();
-
-			while (mReply == null && sw.Elapsed < timeout)
-			{
-				System.Threading.Thread.Sleep(10);
-			}
-
-			return mReply;
-		}
-
 
 		#region IDisposable Support
 		private bool disposedValue = false; // To detect redundant calls

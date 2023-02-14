@@ -21,10 +21,9 @@ namespace SimpleTCP
         public System.Text.Encoding StringEncoder { get; set; }
         public bool AutoTrimStrings { get; set; }
 
-        public event EventHandler<TcpClient> ClientConnected;
-        public event EventHandler<TcpClient> ClientDisconnected;
-        public event EventHandler<Message> DelimiterDataReceived;
-        public event EventHandler<Message> DataReceived;
+        public event EventHandler<ClientConnectionEventArgs> ClientConnected;
+        public event EventHandler<ClientConnectionEventArgs> ClientDisconnected;
+        public event EventHandler<DataReceivedEventArgs> DataReceived;
 
         public IEnumerable<IPAddress> GetIPAddresses()
         {
@@ -61,7 +60,21 @@ namespace SimpleTCP
 
             return listenIps.OrderByDescending(ip => RankIpAddress(ip)).ToList();
         }
-        
+
+        public void Send(string ipAddress, byte[] data)
+        {
+            for (int i = 0; i <_listeners.Count; i++)
+            {
+                foreach (var client in _listeners[i].ConnectedClients)
+                {
+                    if (client.Client.LocalEndPoint.ToString() == ipAddress)
+                    {
+                        client.GetStream().Write(data, 0, data.Length);
+                    }
+                }
+            }
+        }
+
         public void Broadcast(byte[] data)
         {
             foreach(var client in _listeners.SelectMany(x => x.ConnectedClients))
@@ -156,7 +169,6 @@ namespace SimpleTCP
 				}
 				catch (SocketException ex)
 				{
-					DebugInfo(ex.ToString());
 					anyNicFailed = true;
 				}
             }
@@ -214,21 +226,11 @@ namespace SimpleTCP
             }
         }
 
-        internal void NotifyDelimiterMessageRx(Server.ServerListener listener, TcpClient client, byte[] msg)
-        {
-            if (DelimiterDataReceived != null)
-            {
-                Message m = new Message(msg, client, StringEncoder, Delimiter, AutoTrimStrings);
-                DelimiterDataReceived(this, m);
-            }
-        }
-
         internal void NotifyEndTransmissionRx(Server.ServerListener listener, TcpClient client, byte[] msg)
         {
             if (DataReceived != null)
             {
-                Message m = new Message(msg, client, StringEncoder, Delimiter, AutoTrimStrings);
-                DataReceived(this, m);
+                DataReceived(this, new DataReceivedEventArgs(msg, client.Client.LocalEndPoint.ToString()));
             }
         }
 
@@ -236,7 +238,7 @@ namespace SimpleTCP
         {
             if (ClientConnected != null)
             {
-                ClientConnected(this, newClient);
+                ClientConnected(this, new ClientConnectionEventArgs(newClient.Client.LocalEndPoint.ToString()));
             }
         }
 
@@ -244,24 +246,8 @@ namespace SimpleTCP
         {
             if (ClientDisconnected != null)
             {
-                ClientDisconnected(this, disconnectedClient);
+                ClientDisconnected(this, new ClientConnectionEventArgs(disconnectedClient.Client.LocalEndPoint.ToString()));
             }
         }
-
-		#region Debug logging
-
-		[System.Diagnostics.Conditional("DEBUG")]
-		void DebugInfo(string format, params object[] args)
-		{
-			if (_debugInfoTime == null)
-			{
-				_debugInfoTime = new System.Diagnostics.Stopwatch();
-				_debugInfoTime.Start();
-			}
-			System.Diagnostics.Debug.WriteLine(_debugInfoTime.ElapsedMilliseconds + ": " + format, args);
-		}
-		System.Diagnostics.Stopwatch _debugInfoTime;
-
-		#endregion Debug logging
 	}
 }
