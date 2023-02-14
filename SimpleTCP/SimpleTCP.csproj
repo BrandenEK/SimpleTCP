@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="ClientConnectionEventArgs.cs" />
     <Compile Include="DataReceivedEventArgs.cs" />
-    <Compile Include="Message.cs" />
     <Compile Include="Server\ConnectedClient.cs" />
     <Compile Include="Server\ServerListener.cs" />
     <Compile Include="Server\TcpListenerEx.cs" />
