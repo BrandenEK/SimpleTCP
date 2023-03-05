@@ -83,7 +83,7 @@ namespace SimpleTCP
             {
                 foreach (var client in _listeners[i].ConnectedClients)
                 {
-                    if (client.Client.LocalEndPoint.ToString() == ipAddress)
+                    if (client.Client.RemoteEndPoint.ToString() == ipAddress)
                     {
                         client.GetStream().Write(data, 0, data.Length);
                     }
@@ -219,7 +219,7 @@ namespace SimpleTCP
         {
             if (DataReceived != null)
             {
-                DataReceived(this, new DataReceivedEventArgs(msg, client.Client.LocalEndPoint.ToString()));
+                DataReceived(this, new DataReceivedEventArgs(msg, client.Client.RemoteEndPoint.ToString()));
             }
         }
 
@@ -227,7 +227,7 @@ namespace SimpleTCP
         {
             if (ClientConnected != null)
             {
-                ClientConnected(this, new ClientConnectionEventArgs(newClient.Client.LocalEndPoint.ToString()));
+                ClientConnected(this, new ClientConnectionEventArgs(newClient.Client.RemoteEndPoint.ToString()));
             }
         }
 
@@ -235,7 +235,7 @@ namespace SimpleTCP
         {
             if (ClientDisconnected != null)
             {
-                ClientDisconnected(this, new ClientConnectionEventArgs(disconnectedClient.Client.LocalEndPoint.ToString()));
+                ClientDisconnected(this, new ClientConnectionEventArgs(disconnectedClient.Client.RemoteEndPoint.ToString()));
             }
         }
 	}
